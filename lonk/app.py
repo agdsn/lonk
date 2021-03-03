@@ -11,7 +11,7 @@ def index():
 @app.route('/<shortname>')
 def resolve_shortlink(shortname: str):
     if shortname == 'register':
-        return redirect('https://agdsn.de/sipa/register')
+        return redirect('https://agdsn.de/sipa/register', 301)
     else:
         return f"There is no redirect named '{shortname}'.", 404
     # TODO implement proper redirect from DB
