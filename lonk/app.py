@@ -4,8 +4,8 @@ app = Flask('lonk')
 
 
 @app.route('/')
-def hello_world():
-    return "Du hast das Spiel verloren!"
+def index():
+    return "Welcome to LONK."
 
 
 @app.route('/<shortname>')
