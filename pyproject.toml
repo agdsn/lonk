@@ -36,3 +36,22 @@ pylint = "^2.7.2"
 mypy = "^0.812"
 ipython = "^7.21.0"
 pytest-flask = "^1.2.0"
+
+[tool.black]
+line-length = 88
+include = '''
+(
+    ^/tests/.*[.]py$
+  | ^/src/sphobjinv/.*[.]py$
+  | ^/setup[.]py
+  | ^/conftest[.]py
+)
+'''
+exclude = '''
+(
+    __pycache__
+  | ^/[.]
+  | ^/doc
+  | ^/env
+)
+'''
