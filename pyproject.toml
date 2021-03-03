@@ -1,0 +1,35 @@
+# see https://packaging.python.org/tutorials/packaging-projects/#creating-pyproject-toml
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.poetry]
+name = "lonk"
+version = "0.0.1"
+description = "A simple link shortener."
+license = "MIT"
+authors = [
+    "AG DSN <services@agdsn.de>",
+]
+maintainers = [
+    "AG DSN <services@agdsn.de>",
+]
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = "^1.1.2"
+pylint = "^2.7.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.2"
+black = "^20.8b1"
+pylint = "^2.7.2"
