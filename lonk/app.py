@@ -2,7 +2,7 @@ from flask import Flask, redirect, abort
 
 from .lib import try_lookup_link
 from .db import db
-from .types import FlaskResponse
+from .types_ import FlaskResponse
 
 
 class Lonk(Flask):
