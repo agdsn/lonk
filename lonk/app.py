@@ -1,4 +1,6 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, abort
+
+from .types import FlaskResponse
 
 app = Flask("lonk")
 
@@ -9,7 +11,7 @@ def index():
 
 
 @app.route("/<shortname>")
-def resolve_shortlink(shortname: str):
+def resolve_shortlink(shortname: str) -> FlaskResponse:
     if shortname == "register":
         return redirect("https://agdsn.de/sipa/register", 301)
     else:
