@@ -2,6 +2,11 @@ import pytest
 from flask.testing import FlaskClient
 
 
+@pytest.fixture(scope='module', autouse=True)
+def use_db(db):
+    pass
+
+
 def test_root(client: FlaskClient):
     resp = client.get("/")
     assert resp.status_code == 200
