@@ -24,6 +24,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+# might move to `[project.dependencies]` once
+# https://github.com/python-poetry/poetry/issues/3332 is resolved
 [tool.poetry.dependencies]
 python = "^3.9"
 Flask = "^1.1.2"
