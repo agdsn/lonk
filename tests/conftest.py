@@ -11,6 +11,7 @@ def app():
 @pytest.fixture
 def db(app):
     from lonk.db import db
+
     with app.app_context():
         db.create_all()
         yield db

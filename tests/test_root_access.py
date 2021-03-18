@@ -11,11 +11,14 @@ def use_db(db):
     pass
 
 
-@pytest.fixture(params=[
-    ("register", "https://agdsn.de/sipa/register"),
-    ("ggl", "http://google.de"),
-    ("lh", "https://localhost:1432"),
-], ids=['sipa', 'google', 'localhost'])
+@pytest.fixture(
+    params=[
+        ("register", "https://agdsn.de/sipa/register"),
+        ("ggl", "http://google.de"),
+        ("lh", "https://localhost:1432"),
+    ],
+    ids=["sipa", "google", "localhost"],
+)
 def redirect(db, request) -> Generator[Redirect, Any, Any]:
     shortname, url = request.param
     redirect = Redirect(shortname=shortname, url=url)
