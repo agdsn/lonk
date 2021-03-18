@@ -1,0 +1,41 @@
+name: Test/Build
+
+on: [push, pull_request]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install poetry
+        uses: snok/install-poetry@v1.0.0
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+
+      - name: Run pytest
+        run: poetry run pytest tests
+
+      - name: Run Black
+        uses: psf/black@stable
+
+      - name: Build the Docker image
+        run: docker build . --tag registry.agdsn.de/agdsn/coreos/lonk/lonk:${GITHUB_REF##*/}
+      - name: Login to GitLab Registry
+        uses: docker/login-action@v1
+        with:
+          registry: registry.agdsn.de
+          username: "github-actions"
+          password: ${{ secrets.GITLAB_REGISTRY_PASSWORD }}
+      - name: Push to GitLab registry
+        run: docker push registry.agdsn.de/agdsn/coreos/lonk/lonk:${GITHUB_REF##*/}
