@@ -10,12 +10,15 @@ from .types_ import FlaskResponse
 class Lonk(Flask):
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
+        self.init_config()
+        db.init_app(self)
+        register_routes(self)
+
+    def init_config(self):
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         if uri := getenv('LONK_SQLALCHEMY_DATABASE_URI', None):
             self.config['SQLALCHEMY_DATABASE_URI'] = uri
         self.config.setdefault('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
-        db.init_app(self)
-        register_routes(self)
 
 
 def register_routes(app):
