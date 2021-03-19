@@ -1,6 +1,8 @@
 from os import getenv
 
+import sentry_sdk
 from flask import Flask, redirect, abort
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from .lib import try_lookup_link
 from .db import db
@@ -45,6 +47,17 @@ def register_routes(app):
     def create():
         # TODO implement redirect creation
         pass
+
+
+# IMPORT-TIME INITIALIZATIONS
+
+if dsn := getenv('SENTRY_DSN'):
+    sentry_sdk.init(
+        dsn=dsn,
+        integrations=[FlaskIntegration()],
+        traces_sample_rate=1.0,
+        # release="myapp@1.0.0",
+    )
 
 
 app = Lonk("lonk")
