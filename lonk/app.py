@@ -1,3 +1,5 @@
+from os import getenv
+
 from flask import Flask, redirect, abort
 
 from .lib import try_lookup_link
@@ -9,11 +11,11 @@ class Lonk(Flask):
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        if uri := getenv('LONK_SQLALCHEMY_DATABASE_URI', None):
+            self.config['SQLALCHEMY_DATABASE_URI'] = uri
         self.config.setdefault('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
         db.init_app(self)
         register_routes(self)
-
-
 
 
 def register_routes(app):
