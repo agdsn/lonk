@@ -18,3 +18,7 @@ def is_valid_url(url: str) -> bool:
         return urlparse(url).scheme in {'http', 'https'}
     except ValueError:
         return False
+
+
+def get_link_count() -> int:
+    return db.session.query(Redirect).count()
