@@ -15,6 +15,7 @@ class Lonk(Flask):
         self.init_config()
         db.init_app(self)
         register_routes(self)
+        register_commands(self)
 
     def init_config(self):
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -47,6 +48,12 @@ def register_routes(app):
     def create():
         # TODO implement redirect creation
         pass
+
+
+def register_commands(app: Flask):
+    @app.cli.command('createdb')
+    def create_db():
+        db.create_all()
 
 
 # IMPORT-TIME INITIALIZATIONS
