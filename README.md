@@ -27,3 +27,6 @@ docker run -p 5001:5000 \
 ```
 See also [this doc](https://flask.palletsprojects.com/en/1.1.x/cli/)
 on how to configure the flask cli.
+
+# Testing
+Just run it locally with poetry and run `pytest tests`
