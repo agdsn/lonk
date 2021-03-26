@@ -44,7 +44,11 @@ def register_routes(app):
             print(f"Problem when counting links: {e}.\n"
                   "If you forgot to set up your database schema, please run `flask createdb`.")
             exit()
-        print(f"Found {num_redirects} redirects.  Let's go!")
+        if not num_redirects:
+            print("Zero redirects sounds like too few. "
+                  "Are you sure you remembered to fill your database?")
+        else:
+            print(f"Found {num_redirects} redirects.  Let's go!")
 
     @app.route("/")
     def index():
