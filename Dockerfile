@@ -38,5 +38,7 @@ COPY --chown=lonk:lonk . .
 
 EXPOSE 5000
 
-ENV FLASK_APP=lonk.app:app
+# see https://flask.palletsprojects.com/en/1.1.x/cli/#setting-command-options
+ENV FLASK_APP=lonk.app:app \
+    FLASK_RUN_HOST=0.0.0.0
 CMD ["poetry run uwsgi"]
