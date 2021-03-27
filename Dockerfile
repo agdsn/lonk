@@ -32,7 +32,10 @@ WORKDIR /opt/lonk
 
 COPY --chown=lonk:lonk pyproject.toml /opt/lonk
 COPY --chown=lonk:lonk poetry.lock /opt/lonk
-RUN poetry install --no-dev  # Creates a virtualenv automatically
+RUN poetry config virtualenvs.path --unset \
+  && poetry config virtualenvs.in-project true \
+  && poetry install --no-dev
+# The latter Creates a virtualenv automatically
 
 COPY --chown=lonk:lonk . .
 
