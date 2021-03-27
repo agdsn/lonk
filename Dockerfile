@@ -37,7 +37,10 @@ RUN poetry config virtualenvs.path --unset \
   && poetry install --no-dev
 # The latter Creates a virtualenv automatically
 
-COPY --chown=lonk:lonk . .
+# don't copy all of the current directory (might contain stuff like build cache / -config or other
+# state)
+# alternatively, one might add a very generous `.dockerignore`
+COPY --chown=lonk:lonk lonk lonk
 
 EXPOSE 5000
 
