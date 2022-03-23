@@ -30,12 +30,7 @@ jobs:
         uses: psf/black@stable
 
       - name: Build the Docker image
-        run: docker build . --tag registry.agdsn.de/agdsn/coreos/lonk/lonk:${GITHUB_REF##*/}
-      - name: Login to GitLab Registry
-        uses: docker/login-action@v1
-        with:
-          registry: registry.agdsn.de
-          username: "github-actions"
-          password: ${{ secrets.GITLAB_REGISTRY_PASSWORD }}
+        run: docker build . --tag ghcr.io/agdsn/lonk:${GITHUB_REF_NAME}
+
       - name: Push to GitLab registry
-        run: docker push registry.agdsn.de/agdsn/coreos/lonk/lonk:${GITHUB_REF##*/}
+        run: docker push ghcr.io/agdsn/lonk:${GITHUB_REF_NAME}
