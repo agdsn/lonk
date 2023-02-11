@@ -42,7 +42,7 @@ pytest = "^6.2.2"
 black = "^20.8b1"
 pylint = "^2.7.2"
 mypy = "^0.812"
-ipython = "^7.21.0"
+ipython = "^8.10.0"
 pytest-flask = "^1.2.0"
 
 [tool.black]
