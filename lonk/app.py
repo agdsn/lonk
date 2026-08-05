@@ -1,11 +1,11 @@
 from os import getenv
 
 import sentry_sdk
-from flask import Flask, redirect, abort
+from flask import Flask, redirect, abort, render_template, request
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy.exc import OperationalError
 
-from .lib import get_link_count, try_lookup_link
+from .lib import get_link_count, is_valid_url, try_lookup_link, get_all_links, create_link
 from .db import db
 from .types_ import FlaskResponse
 
@@ -64,15 +64,31 @@ def register_routes(app):
 
         return f"There is no redirect named '{shortname}'.", 404
 
-    @app.route("/_admin")
+    @app.route("/_admin", methods=["GET"])
     def admin_overview():
-        # TODO implement admin landing page
-        pass
+        lonks = get_all_links()
 
-    @app.route("/_admin/create", methods=["GET", "POST"])
+        return render_template('admin.html', lonks=lonks)
+
+    @app.route("/_admin/create", methods=["GET"])
     def create():
-        # TODO implement redirect creation
-        pass
+        return render_template('create.html')
+
+    @app.route("/_admin/create", methods=["POST"])
+    def create():
+        shortname = request.form.get("shortname", None)
+        url = request.form.get("url", None)
+
+        if shortname is None or url is None:
+            return render_template('create.html', error='shortname or url missing'), 400
+
+        if try_lookup_link(shortname) is not None:
+            return render_template('create.html', error='shortname already exists'), 400
+
+        if not is_valid_url(url):
+            return render_template('create.html', error='invalid url'), 400
+
+        create_link(shortname, url)
 
 
 def register_commands(app: Flask):

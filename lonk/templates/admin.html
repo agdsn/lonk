@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Redirect</title>
+</head>
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        min-width: 200px;
+    }
+</style>
+<body>
+    <div id="urls">
+        <a href="./create">Create</a>
+        <p>Existing Redirects</p>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">shortname</th>
+                    <th scope="col">url</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in lonks %}
+                <tr>
+                    <td>{{ entry.id }}</td>
+                    <td>{{ entry.shortname }}</td>
+                    <td><a href="{{ entry.url }}">{{ entry.url }}</a></td>
+                    <td><form method="post" action='/_admin/delete'><input type="hidden" name="delete" value="delete"/><input type="hidden" name="id" value="{{ entry.id }}"/><input type="submit" value="delete"/></form></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

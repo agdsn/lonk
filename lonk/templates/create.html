@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Redirect</title>
+</head>
+<body>
+    {% if error %}
+    <a style="color: red">Error: {{ error }}</a>
+    {% endif %}
+    <form method="post">
+        <label for="shortname">shortname:</label><br>
+        <input type="text" id="shortname" name="shortname" required><br><br>
+        <label for="url">url:</label><br>
+        <input type="text" id="url" name="url" required><br><br>
+        <input type="submit" value="Create">
+    </form>
+</body>
+</html>
