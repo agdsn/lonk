@@ -2,12 +2,18 @@ import sys
 from os import getenv
 
 import sentry_sdk
-from flask import Flask, redirect, abort, render_template, request, url_for
+from flask import Flask, abort, redirect, render_template, request, url_for
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy.exc import OperationalError
 
-from .lib import get_link_count, is_valid_url, try_lookup_link, get_all_links, create_link
 from .db import db
+from .lib import (
+    create_link,
+    get_all_links,
+    get_link_count,
+    is_valid_url,
+    try_lookup_link,
+)
 from .types_ import FlaskResponse
 
 
