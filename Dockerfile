@@ -1,4 +1,4 @@
-FROM python:3.9-buster
+FROM python:3.14-slim
 ARG UID=1000
 ARG GID=1000
 ENV LANG=C.UTF-8 \
@@ -9,19 +9,8 @@ ENV LANG=C.UTF-8 \
   PIP_NO_CACHE_DIR=off \
   PIP_DISABLE_PIP_VERSION_CHECK=on \
   PIP_DEFAULT_TIMEOUT=100 \
-  POETRY_VERSION=1.1.5
-
-COPY docker/etc/apt /etc/apt
-
-# Install Debian packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        bash \
-        libpq5 \
-    && apt-get -y upgrade \
-    && apt-get -y dist-upgrade \
-    && apt-get clean \
-    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - \
-    && pip install "poetry==$POETRY_VERSION"
+  UV_NO_CACHE=1 \
+  UV_NO_DEV=1
 
 RUN groupadd --force --gid $GID lonk \
     && useradd --non-unique --home-dir /opt/lonk --create-home --uid $UID --gid $GID --comment "Application" lonk
@@ -31,11 +20,11 @@ USER lonk
 WORKDIR /opt/lonk
 
 COPY --chown=lonk:lonk pyproject.toml /opt/lonk
-COPY --chown=lonk:lonk poetry.lock /opt/lonk
-RUN poetry config virtualenvs.path --unset \
-  && poetry config virtualenvs.in-project true \
-  && poetry install --no-dev
-# The latter Creates a virtualenv automatically
+COPY --chown=lonk:lonk uv.lock /opt/lonk
+RUN --mount=from=ghcr.io/astral-sh/uv:0.12.5,source=/uv,target=/bin/uv \
+    uv venv \
+    && uv pip install pip \
+    && uv sync
 
 # don't copy all of the current directory (might contain stuff like build cache / -config or other
 # state)
@@ -44,7 +33,7 @@ COPY --chown=lonk:lonk lonk lonk
 
 EXPOSE 5000
 
-# see https://flask.palletsprojects.com/en/1.1.x/cli/#setting-command-options
 ENV FLASK_APP=lonk.app:app \
     FLASK_RUN_HOST=0.0.0.0
-CMD ["poetry run uwsgi"]
+
+CMD [".venv/bin/flask", "run"]

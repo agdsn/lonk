@@ -1,7 +1,7 @@
 from os import getenv
 
 import sentry_sdk
-from flask import Flask, redirect, abort, render_template, request
+from flask import Flask, redirect, abort, render_template, request, url_for
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy.exc import OperationalError
 
@@ -13,8 +13,13 @@ from .types_ import FlaskResponse
 class Lonk(Flask):
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
-        self.init_config()
+        db_needs_bootstrap = self.init_config()
         db.init_app(self)
+
+        if db_needs_bootstrap:
+            with self.app_context():
+                db.create_all()
+
         register_routes(self)
         register_commands(self)
 
@@ -24,31 +29,32 @@ class Lonk(Flask):
             self.config['SQLALCHEMY_DATABASE_URI'] = uri
         if not self.config.get('SQLALCHEMY_DATABASE_URI'):
             self.config.setdefault('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
-            def _auto_create_db():
-                db.create_all()
-            self.before_first_request(_auto_create_db)
+            return True
 
+        return False
 
 def register_routes(app):
-    @app.before_first_request
-    def check_db_connection():
-        """Does a sanity check to determine whether the schema has been set up.
+    with app.app_context():
+        def check_db_connection():
+            """Does a sanity check to determine whether the schema has been set up.
 
-        When using a `sqlite://:memory:` db instance, make sure that this hook is registered
-        _after_ the auto create function.
-        """
-        try:
-            with app.app_context():
-                num_redirects = get_link_count()
-        except OperationalError as e:
-            print(f"Problem when counting links: {e}.\n"
-                  "If you forgot to set up your database schema, please run `flask createdb`.")
-            exit()
-        if not num_redirects:
-            print("Zero redirects sounds like too few. "
-                  "Are you sure you remembered to fill your database?")
-        else:
-            print(f"Found {num_redirects} redirects.  Let's go!")
+            When using a `sqlite://:memory:` db instance, make sure that this hook is registered
+            _after_ the auto create function.
+            """
+            try:
+                with app.app_context():
+                    num_redirects = get_link_count()
+            except OperationalError as e:
+                print(f"Problem when counting links: {e}.\n"
+                      "If you forgot to set up your database schema, please run `flask createdb`.")
+                exit()
+            if not num_redirects:
+                print("Zero redirects sounds like too few. "
+                      "Are you sure you remembered to fill your database?")
+            else:
+                print(f"Found {num_redirects} redirects.  Let's go!")
+
+        check_db_connection()
 
     @app.route("/")
     def index():
@@ -75,7 +81,7 @@ def register_routes(app):
         return render_template('create.html')
 
     @app.route("/_admin/create", methods=["POST"])
-    def create():
+    def create_post():
         shortname = request.form.get("shortname", None)
         url = request.form.get("url", None)
 
@@ -89,6 +95,8 @@ def register_routes(app):
             return render_template('create.html', error='invalid url'), 400
 
         create_link(shortname, url)
+
+        return redirect(url_for('admin_overview'))
 
 
 def register_commands(app: Flask):
