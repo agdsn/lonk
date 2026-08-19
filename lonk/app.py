@@ -1,3 +1,4 @@
+import sys
 from os import getenv
 
 import sentry_sdk
@@ -35,26 +36,18 @@ class Lonk(Flask):
 
 def register_routes(app):
     with app.app_context():
-        def check_db_connection():
-            """Does a sanity check to determine whether the schema has been set up.
-
-            When using a `sqlite://:memory:` db instance, make sure that this hook is registered
-            _after_ the auto create function.
-            """
-            try:
-                with app.app_context():
-                    num_redirects = get_link_count()
-            except OperationalError as e:
-                print(f"Problem when counting links: {e}.\n"
-                      "If you forgot to set up your database schema, please run `flask createdb`.")
-                exit()
-            if not num_redirects:
-                print("Zero redirects sounds like too few. "
-                      "Are you sure you remembered to fill your database?")
-            else:
-                print(f"Found {num_redirects} redirects.  Let's go!")
-
-        check_db_connection()
+        try:
+            with app.app_context():
+                num_redirects = get_link_count()
+        except OperationalError as e:
+            print(f"Problem when counting links: {e}.\n"
+                  "If you forgot to set up your database schema, please run `flask createdb`.")
+            sys.exit()
+        if not num_redirects:
+            print("Zero redirects sounds like too few. "
+                  "Are you sure you remembered to fill your database?")
+        else:
+            print(f"Found {num_redirects} redirects.  Let's go!")
 
     @app.route("/")
     def index():
