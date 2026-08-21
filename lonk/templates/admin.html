@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Redirect</title>
-</head>
-<style>
-    table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-    }
-    th, td {
-        min-width: 200px;
-    }
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            min-width: 200px;
+        }
+        #urls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
 </style>
+</head>
 <body>
     <div id="urls">
-        <a href="{{ url_for('create') }}">Create</a>
+        <a href="{{ url_for('create') }}">Create new link</a>
         <p>Existing Redirects</p>
         <table>
             <thead>

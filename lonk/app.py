@@ -85,13 +85,13 @@ def register_routes(app):
         url = request.form.get("url", None)
 
         if shortname is None or url is None:
-            return render_template('create.html', error='shortname or url missing'), 400
-
-        if try_lookup_link(shortname) is not None:
-            return render_template('create.html', error='shortname already exists'), 400
+            return render_template('create.html', error='shortname or url missing', shortname=shortname, url=url), 400
 
         if not is_valid_url(url):
-            return render_template('create.html', error='invalid url'), 400
+            return render_template('create.html', error='invalid url', shortname=shortname, url=url), 400
+
+        if try_lookup_link(shortname) is not None:
+            return render_template('create.html', error='shortname already exists', shortname=shortname, url=url), 400
 
         create_link(shortname, url)
 
