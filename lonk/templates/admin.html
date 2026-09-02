@@ -17,11 +17,19 @@
             align-items: center;
             flex-direction: column;
         }
+        #href-new {
+            padding: 1px 6px;
+            border: 1px outset buttonborder;
+            border-radius: 3px;
+            color: buttontext;
+            background-color: buttonface;
+            text-decoration: none;
+        }
 </style>
 </head>
 <body>
     <div id="urls">
-        <a href="{{ url_for('create') }}">Create new link</a>
+        <a id="href-new" href="{{ url_for('create') }}">Create new link</a>
         <p>Existing Redirects</p>
         <table>
             <thead>
