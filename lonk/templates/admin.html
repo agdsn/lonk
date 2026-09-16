@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Redirect</title>
+    <style>
+        :root {
+            /* Colors from https://app.atmos.style/692acb1ea23ab26ba734d25e */
+            /* Navy Blue */
+            --navy-blue-900: #000117;
+            --navy-blue-800: #000745;
+            --navy-blue-725: #000080;
+            --navy-blue-625: #3000b1;
+            --navy-blue-550: #5900de;
+            --navy-blue-450: #7d2bfe;
+            --navy-blue-375: #9a62ff;
+            --navy-blue-275: #b389ff;
+            --navy-blue-200: #cdb0ff;
+            --navy-blue-100: #e5d6ff;
+            font-family: sans;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            min-width: 200px;
+        }
+        #urls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        #href-new {
+            padding: 1rex 3rex;
+            text-decoration: none;
+
+            border-radius: 1rex;
+            background: var(--navy-blue-100);
+            color: var(--navy-blue-900);
+
+            &:is(:hover, :focus) {
+                border-color: var(--navy-blue-275);
+                outline: 3px var(--navy-blue-275) solid;
+            }
+            &:active {
+                background-color: var(--navy-blue-275);
+            }
+        }
+</style>
+</head>
+<body>
+    <div id="urls">
+        <a id="href-new" href="{{ url_for('create') }}">Create new link</a>
+        <p>Existing Redirects</p>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">shortname</th>
+                    <th scope="col">url</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in lonks %}
+                <tr>
+                    <td>{{ entry.id }}</td>
+                    <td>{{ entry.shortname }}</td>
+                    <td><a href="{{ entry.url }}">{{ entry.url }}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
