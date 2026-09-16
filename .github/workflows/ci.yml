@@ -47,5 +47,5 @@ jobs:
         run: docker build . --tag ghcr.io/agdsn/lonk:${GITHUB_REF_NAME}
 
       - name: Push to registry
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' }}
         run: docker push ghcr.io/agdsn/lonk:${GITHUB_REF_NAME}
