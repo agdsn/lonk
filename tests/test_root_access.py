@@ -6,6 +6,10 @@ from flask.testing import FlaskClient
 from lonk.db import Redirect
 
 
+@pytest.fixture()
+def client(app):
+    return app.test_client()
+
 @pytest.fixture(autouse=True)
 def use_db(db):
     pass
