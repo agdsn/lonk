@@ -1,8 +1,14 @@
 import pytest
 from flask.testing import FlaskClient
+import os
 
-overview_page = '/_admin'
-create_page = '/_admin/create'
+overview_page = '/'
+create_page = '/create'
+
+@pytest.fixture
+def app():
+    from lonk.admin_app import app as admin_app
+    return admin_app
 
 @pytest.fixture()
 def client(app):
@@ -43,7 +49,7 @@ def test_create_post_success(client: FlaskClient, redirect: set[str, str]):
     shortname, url = redirect
     resp = client.post(create_page, data={'shortname': shortname, 'url': url})
     assert resp.status_code == 302
-    assert resp.headers['Location'] == '/_admin'
+    assert resp.headers['Location'] == '/'
 
     get_resp = client.get(overview_page)
     assert get_resp.status_code == 200

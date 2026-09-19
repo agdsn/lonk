@@ -6,6 +6,11 @@ from flask.testing import FlaskClient
 from lonk.db import Redirect
 
 
+@pytest.fixture
+def app():
+    from lonk.redirect_app import app as redirect_app
+    return redirect_app
+
 @pytest.fixture()
 def client(app):
     return app.test_client()

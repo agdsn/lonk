@@ -21,6 +21,7 @@ WORKDIR /opt/lonk
 
 COPY --chown=lonk:lonk pyproject.toml /opt/lonk
 COPY --chown=lonk:lonk uv.lock /opt/lonk
+
 RUN --mount=from=ghcr.io/astral-sh/uv:0.12.5,source=/uv,target=/bin/uv \
     uv venv \
     && uv pip install pip \
@@ -30,10 +31,11 @@ RUN --mount=from=ghcr.io/astral-sh/uv:0.12.5,source=/uv,target=/bin/uv \
 # state)
 # alternatively, one might add a very generous `.dockerignore`
 COPY --chown=lonk:lonk lonk lonk
+COPY --chown=lonk:lonk data data
+
+ENV FLASK_APP=lonk.redirect_app:app \
+    FLASK_RUN_HOST=0.0.0.0 
 
 EXPOSE 5000
-
-ENV FLASK_APP=lonk.app:app \
-    FLASK_RUN_HOST=0.0.0.0
 
 CMD [".venv/bin/flask", "run"]

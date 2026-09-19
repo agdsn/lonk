@@ -1,1 +1,1 @@
-FLASK_APP=lonk.app:app
+FLASK_APP=lonk.redirect_app:app
