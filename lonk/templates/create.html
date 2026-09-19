@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Redirect</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 0.2rem;
+            margin: 1rem;
+        }
+
+        .border {
+            padding: 1rem;
+            border: 1px solid black;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form method="post" class="container border">
+            <label for="shortname">shortname:</label><br>
+            <input type="text" id="shortname" name="shortname" {% if shortname %}value="{{ shortname }}" {% endif %}required><br><br>
+            <label for="url">url:</label><br>
+            <input type="text" id="url" name="url" {% if url %}value="{{ url }}" {% endif %}required><br><br>
+            <input type="submit" value="Create">
+        </form>
+        {% if error %}
+        <a style="color: red">Error: {{ error }}</a>
+        {% endif %}
+    </div>
+</body>
+</html>

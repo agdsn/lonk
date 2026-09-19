@@ -311,3 +311,7 @@ dmypy.json
 .prof
 
 # End of https://www.toptal.com/developers/gitignore/api/python,linux,jetbrains,emacs
+
+# local sqlite db data, bind-mounted into the docker examples in README.md
+/data/*
+!/data/.gitkeep
