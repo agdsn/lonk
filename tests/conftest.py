@@ -1,12 +1,7 @@
+import os
 import pytest
 
-from lonk.app import app as lonk_app
-
-
-@pytest.fixture
-def app():
-    return lonk_app
-
+os.environ.setdefault('LONK_SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
 
 @pytest.fixture
 def db(app):
