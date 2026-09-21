@@ -1,11 +1,11 @@
-deb http://ftp.agdsn.de/debian buster main
-deb-src http://ftp.agdsn.de/debian buster main
+deb http://ftp.agdsn.de/debian trixie main
+deb-src http://ftp.agdsn.de/debian trixie main
 
-deb http://ftp.agdsn.de/debian buster-backports main
-deb-src http://ftp.agdsn.de/debian buster-backports main
+deb http://ftp.agdsn.de/debian trixie-backports main
+deb-src http://ftp.agdsn.de/debian trixie-backports main
 
-deb http://ftp.agdsn.de/debian buster-updates main
-deb-src http://ftp.agdsn.de/debian buster-updates main
+deb http://ftp.agdsn.de/debian trixie-updates main
+deb-src http://ftp.agdsn.de/debian trixie-updates main
 
-deb http://ftp.agdsn.de/pub/mirrors/debian-security buster/updates main
-deb-src http://ftp.agdsn.de/pub/mirrors/debian-security buster/updates main
+deb http://ftp.agdsn.de/pub/mirrors/debian-security trixie-security main
+deb-src http://ftp.agdsn.de/pub/mirrors/debian-security trixie-security main

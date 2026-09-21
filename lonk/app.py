@@ -1,20 +1,32 @@
+import sys
 from os import getenv
 
 import sentry_sdk
-from flask import Flask, redirect, abort
+from flask import Flask, abort, redirect, render_template, request, url_for
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy.exc import OperationalError
 
-from .lib import get_link_count, try_lookup_link
 from .db import db
+from .lib import (
+    create_link,
+    get_all_links,
+    get_link_count,
+    is_valid_url,
+    try_lookup_link,
+)
 from .types_ import FlaskResponse
 
 
 class Lonk(Flask):
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
-        self.init_config()
+        db_needs_bootstrap = self.init_config()
         db.init_app(self)
+
+        if db_needs_bootstrap:
+            with self.app_context():
+                db.create_all()
+
         register_routes(self)
         register_commands(self)
 
@@ -24,26 +36,19 @@ class Lonk(Flask):
             self.config['SQLALCHEMY_DATABASE_URI'] = uri
         if not self.config.get('SQLALCHEMY_DATABASE_URI'):
             self.config.setdefault('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
-            def _auto_create_db():
-                db.create_all()
-            self.before_first_request(_auto_create_db)
+            return True
 
+        return False
 
 def register_routes(app):
-    @app.before_first_request
-    def check_db_connection():
-        """Does a sanity check to determine whether the schema has been set up.
-
-        When using a `sqlite://:memory:` db instance, make sure that this hook is registered
-        _after_ the auto create function.
-        """
+    with app.app_context():
         try:
             with app.app_context():
                 num_redirects = get_link_count()
         except OperationalError as e:
             print(f"Problem when counting links: {e}.\n"
                   "If you forgot to set up your database schema, please run `flask createdb`.")
-            exit()
+            sys.exit()
         if not num_redirects:
             print("Zero redirects sounds like too few. "
                   "Are you sure you remembered to fill your database?")
@@ -64,15 +69,33 @@ def register_routes(app):
 
         return f"There is no redirect named '{shortname}'.", 404
 
-    @app.route("/_admin")
+    @app.route("/_admin", methods=["GET"])
     def admin_overview():
-        # TODO implement admin landing page
-        pass
+        lonks = get_all_links()
 
-    @app.route("/_admin/create", methods=["GET", "POST"])
+        return render_template('admin.html', lonks=lonks)
+
+    @app.route("/_admin/create", methods=["GET"])
     def create():
-        # TODO implement redirect creation
-        pass
+        return render_template('create.html')
+
+    @app.route("/_admin/create", methods=["POST"])
+    def create_post():
+        shortname = request.form.get("shortname", None)
+        url = request.form.get("url", None)
+
+        if shortname is None or url is None:
+            return render_template('create.html', error='shortname or url missing', shortname=shortname, url=url), 400
+
+        if not is_valid_url(url):
+            return render_template('create.html', error='invalid url', shortname=shortname, url=url), 400
+
+        if try_lookup_link(shortname) is not None:
+            return render_template('create.html', error='shortname already exists', shortname=shortname, url=url), 400
+
+        create_link(shortname, url)
+
+        return redirect(url_for('admin_overview'))
 
 
 def register_commands(app: Flask):
